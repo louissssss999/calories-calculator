@@ -1,40 +1,68 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>PACE Plate</title> <link rel="stylesheet" href="styles.css"/> <meta name="description" content="Search foods, adjust portions, and see calories, macros, and P.A.C.E. portions (P20, C20, F10)."/> </head> <body> <header class="app-header"> <h1>PACE Plate</h1> <div class="settings"> <label>Daily Targets (g):</label> <input id="target-protein" type="number" min="0" value="150" title="Protein target (g)"/> <input id="target-carbs" type="number" min="0" value="200" title="Carbs target (g)"/> <input id="target-fat" type="number" min="0" value="70" title="Fat target (g)"/> </div> </header> <main class="container"> <section class="search-section"> <input id="search" type="search" placeholder="Search foods (e.g., Chicken, Rice, Apple)" autocomplete="off"/> <div id="results" class="results" aria-live="polite"></div> </section>
-Copy
-<section class="meal-section">
-  <h2>Current Meal</h2>
-  <div id="meal-list" class="meal-list"></div>
-  <div class="totals-card" aria-live="polite">
-    <div class="total-row">
-      <div><strong>Total kcal</strong>: <span id="total-kcal">0</span></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACE Plate</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1>PACE Plate</h1>
+        <div class="settings">
+            <label>Daily Targets (g):</label>
+            <input id="protein-target" type="number" value="150" placeholder="Protein">
+            <input id="carbs-target" type="number" value="200" placeholder="Carbs">
+            <input id="fat-target" type="number" value="70" placeholder="Fat">
+        </div>
+    </header>
+    <div class="container">
+        <div class="search-section">
+            <input type="text" id="search" placeholder="Search foods...">
+        </div>
+        <div id="results" class="results"></div>
+        <div class="meal-section">
+            <h2>Current Meal</h2>
+            <div id="meal-list" class="meal-list"></div>
+            <div class="totals-card">
+                <div class="total-row">
+                    <div>Total kcal: <span id="total-kcal">0</span></div>
+                    <div>Protein: <span id="total-p">0</span> g</div>
+                    <div>Carbs: <span id="total-c">0</span> g</div>
+                    <div>Fat: <span id="total-f">0</span> g</div>
+                </div>
+                <div class="pace-row">
+                    <div class="chip">P20: <span id="pace-p">0</span></div>
+                    <div class="chip">C20: <span id="pace-c">0</span></div>
+                    <div class="chip">F10: <span id="pace-f">0</span></div>
+                </div>
+                <div class="bars">
+                    <div class="bar">
+                        <span>Protein</span>
+                        <div class="bar-track">
+                            <div id="protein-bar" class="bar-fill"></div>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <span>Carbs</span>
+                        <div class="bar-track">
+                            <div id="carbs-bar" class="bar-fill"></div>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <span>Fat</span>
+                        <div class="bar-track">
+                            <div id="fat-bar" class="bar-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button id="clear-btn" class="primary">Clear</button>
+                    <button id="export-btn" class="primary">Export Meal (CSV)</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="total-row">
-      <div><strong>Protein</strong>: <span id="total-protein">0</span> g</div>
-      <div><strong>Carbs</strong>: <span id="total-carbs">0</span> g</div>
-      <div><strong>Fat</strong>: <span id="total-fat">0</span> g</div>
-    </div>
-    <div class="pace-row">
-      <span class="chip">P20: <span id="pace-p">0</span></span>
-      <span class="chip">C20: <span id="pace-c">0</span></span>
-      <span class="chip">F10: <span id="pace-f">0</span></span>
-    </div>
-    <div class="bars">
-      <div class="bar">
-        <div class="bar-label">Protein</div>
-        <div class="bar-track"><div id="bar-protein" class="bar-fill"></div></div>
-      </div>
-      <div class="bar">
-        <div class="bar-label">Carbs</div>
-        <div class="bar-track"><div id="bar-carbs" class="bar-fill"></div></div>
-      </div>
-      <div class="bar">
-        <div class="bar-label">Fat</div>
-        <div class="bar-track"><div id="bar-fat" class="bar-fill"></div></div>
-      </div>
-    </div>
-    <div class="actions">
-      <button id="clear-meal" class="secondary">Clear</button>
-      <button id="export-meal" class="primary">Export Meal (CSV)</button>
-    </div>
-  </div>
-</section>
-</main> <footer class="app-footer"> <a href="foods.csv" download>Download foods.csv</a> <span> • </span> <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener">How to host on GitHub Pages</a> </footer> <script src="app.js"></script> </body> </html>
+    <script src="app.js"></script>
+</body>
+</html>
