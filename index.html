@@ -3,62 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PACE Plate</title>
+    <title>P.A.C.E. Calories Calculator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="app-header">
-        <h1>PACE Plate</h1>
+        <div class="logo-title">
+            <img src="smaller logo P.A.C.E..jpg" alt="P.A.C.E. Logo" class="logo">
+            <h1>P.A.C.E. Calories Calculator</h1>
+        </div>
         <div class="settings">
-            <label>Daily Targets (g):</label>
-            <input id="protein-target" type="number" value="150" placeholder="Protein">
-            <input id="carbs-target" type="number" value="200" placeholder="Carbs">
-            <input id="fat-target" type="number" value="70" placeholder="Fat">
+            <div class="target-group">
+                <label>Protein (g):</label>
+                <input id="protein-target" type="number" value="150" placeholder="150">
+            </div>
+            <div class="target-group">
+                <label>Carbs (g):</label>
+                <input id="carbs-target" type="number" value="200" placeholder="200">
+            </div>
+            <div class="target-group">
+                <label>Fat (g):</label>
+                <input id="fat-target" type="number" value="70" placeholder="70">
+            </div>
+            <div class="target-group">
+                <label>Calories (kcal):</label>
+                <input id="calories-target" type="number" value="2000" placeholder="2000">
+            </div>
         </div>
     </header>
     <div class="container">
-        <div class="search-section">
-            <input type="text" id="search" placeholder="Search foods...">
-        </div>
-        <div id="results" class="results"></div>
-        <div class="meal-section">
-            <h2>Current Meal</h2>
-            <div id="meal-list" class="meal-list"></div>
-            <div class="totals-card">
-                <div class="total-row">
-                    <div>Total kcal: <span id="total-kcal">0</span></div>
-                    <div>Protein: <span id="total-p">0</span> g</div>
-                    <div>Carbs: <span id="total-c">0</span> g</div>
-                    <div>Fat: <span id="total-f">0</span> g</div>
-                </div>
-                <div class="pace-row">
-                    <div class="chip">P20: <span id="pace-p">0</span></div>
-                    <div class="chip">C20: <span id="pace-c">0</span></div>
-                    <div class="chip">F10: <span id="pace-f">0</span></div>
-                </div>
-                <div class="bars">
-                    <div class="bar">
-                        <span>Protein</span>
-                        <div class="bar-track">
-                            <div id="protein-bar" class="bar-fill"></div>
+        <div class="main-content">
+            <div class="search-section">
+                <input type="text" id="search" placeholder="Search foods...">
+                <div id="results" class="results"></div>
+            </div>
+            <div class="meal-section">
+                <h2>Meals & Snacks</h2>
+                <div id="meal-categories" class="meal-categories"></div>
+                <div class="totals-card">
+                    <div class="total-row">
+                        <div>Total kcal: <span id="total-kcal">0</span></div>
+                        <div>Protein: <span id="total-p">0</span> g</div>
+                        <div>Carbs: <span id="total-c">0</span> g</div>
+                        <div>Fat: <span id="total-f">0</span> g</div>
+                    </div>
+                    <div class="pace-row">
+                        <div class="chip">PRO: <span id="pace-p">0</span></div>
+                        <div class="chip">CHO: <span id="pace-c">0</span></div>
+                        <div class="chip">FAT: <span id="pace-f">0</span></div>
+                    </div>
+                    <div class="bars">
+                        <div class="bar">
+                            <span>Calories</span>
+                            <div class="bar-track">
+                                <div id="calories-bar" class="bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="bar">
+                            <span>Protein</span>
+                            <div class="bar-track">
+                                <div id="protein-bar" class="bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="bar">
+                            <span>Carbs</span>
+                            <div class="bar-track">
+                                <div id="carbs-bar" class="bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="bar">
+                            <span>Fat</span>
+                            <div class="bar-track">
+                                <div id="fat-bar" class="bar-fill"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="bar">
-                        <span>Carbs</span>
-                        <div class="bar-track">
-                            <div id="carbs-bar" class="bar-fill"></div>
-                        </div>
+                    <div class="differences">
+                        <div>Differences:</div>
+                        <div>Calories: <span id="diff-kcal">0</span> kcal</div>
+                        <div>Protein: <span id="diff-p">0</span> g</div>
+                        <div>Carbs: <span id="diff-c">0</span> g</div>
+                        <div>Fat: <span id="diff-f">0</span> g</div>
                     </div>
-                    <div class="bar">
-                        <span>Fat</span>
-                        <div class="bar-track">
-                            <div id="fat-bar" class="bar-fill"></div>
-                        </div>
+                    <div class="actions">
+                        <button id="clear-btn" class="primary">Clear All</button>
                     </div>
-                </div>
-                <div class="actions">
-                    <button id="clear-btn" class="primary">Clear</button>
-                    <button id="export-btn" class="primary">Export Meal (CSV)</button>
                 </div>
             </div>
         </div>
