@@ -36,7 +36,12 @@ function round(n, d = 0) {
 }
 
 let FOODS = [];
-let MEAL = []; // [{id, grams}]
+let MEALS = { // {category: [{id, grams}]}
+    Breakfast: [],
+    Lunch: [],
+    Dinner: [],
+    Snacks: []
+};
 
 const el = id => document.getElementById(id);
 
@@ -57,6 +62,7 @@ async function loadFoods() {
         sodium100: toNumber(r["sodium_mg_100g"]),
     }));
     renderResults();
+    renderMeals();
 }
 
 // Search
@@ -80,9 +86,14 @@ function renderResults() {
                 <div class="result-name">${f.name} (${f.category})</div>
                 <div class="result-meta">${f.kcal100} kcal • P ${f.p100}g • C ${f.c100}g • F ${f.f100}g per 100g</div>
             </div>
-            <button class="add-btn">+</button>
+            <button class="add-btn" data-category="Breakfast">+</button>
+            <button class="add-btn" data-category="Lunch">+</button>
+            <button class="add-btn" data-category="Dinner">+</button>
+            <button class="add-btn" data-category="Snacks">+</button>
         `;
-        row.querySelector('.add-btn').onclick = () => { addToMeal(f.id, 100); };
+        row.querySelectorAll('.add-btn').forEach(btn => {
+            btn.onclick = () => { addToMeal(btn.dataset.category, f.id, 100); };
+        });
         container.appendChild(row);
     });
 }
@@ -92,23 +103,27 @@ function findFood(id) {
     return FOODS.find(f => String(f.id) === String(id));
 }
 
-function addToMeal(id, grams = 100) {
-    const existing = MEAL.find(x => x.id === id);
+function addToMeal(category, id, grams = 100) {
+    if (!MEALS[category]) MEALS[category] = [];
+    const existing = MEALS[category].find(x => x.id === id);
     if (existing) existing.grams += grams;
-    else MEAL.push({ id, grams });
-    renderMeal();
+    else MEALS[category].push({ id, grams });
+    renderMeals();
 }
 
-function removeFromMeal(id) {
-    MEAL = MEAL.filter(x => x.id !== id);
-    renderMeal();
+function removeFromMeal(category, id) {
+    if (MEALS[category]) {
+        MEALS[category] = MEALS[category].filter(x => x.id !== id);
+    }
+    renderMeals();
 }
 
-function updateGrams(id, grams) {
-    const item = MEAL.find(x => x.id === id);
+function updateGrams(category, id, grams) {
+    if (!MEALS[category]) return;
+    const item = MEALS[category].find(x => x.id === id);
     if (!item) return;
     item.grams = Math.max(0, grams || 0);
-    renderMeal();
+    renderMeals();
 }
 
 // Calculations per item
@@ -118,76 +133,96 @@ function calcFor(f, grams) {
     const p = round(f.p100 * factor, 1);
     const c = round(f.c100 * factor, 1);
     const fat = round(f.f100 * factor, 1);
-    const P20 = round(p / 20, 2);
-    const C20 = round(c / 20, 2);
-    const F10 = round(fat / 10, 2);
-    return { kcal, p, c, fat, P20, C20, F10 };
+    const PRO = round(p / 20, 2);
+    const CHO = round(c / 20, 2);
+    const FAT = round(fat / 10, 2);
+    return { kcal, p, c, fat, PRO, CHO, FAT };
 }
 
-// Render meal list and totals
-function renderMeal() {
-    const container = el('meal-list');
+// Render meal categories
+function renderMeals() {
+    const container = el('meal-categories');
     container.innerHTML = '';
-    let tk = 0, tp = 0, tc = 0, tf = 0;
-    MEAL.forEach(item => {
-        const f = findFood(item.id);
-        if (!f) return;
-        const calc = calcFor(f, item.grams);
-        tk += calc.kcal;
-        tp += calc.p;
-        tc += calc.c;
-        tf += calc.fat;
-        const row = document.createElement('div');
-        row.className = 'meal-row';
-        row.innerHTML = `
-            <div class="meal-name">${f.name}</div>
-            <input class="meal-grams" type="number" value="${item.grams}" onchange="updateGrams('${f.id}', this.value)">
-            <div class="meal-macros">${calc.kcal} kcal • P ${calc.p}g • C ${calc.c}g • F ${calc.fat}g</div>
-            <button class="del-btn" onclick="removeFromMeal('${f.id}')">×</button>
+    let totalKcal = 0, totalP = 0, totalC = 0, totalF = 0;
+    Object.keys(MEALS).forEach(cat => {
+        const details = document.createElement('details');
+        details.className = 'meal-category';
+        const summary = document.createElement('summary');
+        summary.textContent = cat;
+        details.appendChild(summary);
+        const list = document.createElement('div');
+        list.className = 'meal-list';
+        let catKcal = 0, catP = 0, catC = 0, catF = 0;
+        MEALS[cat].forEach(item => {
+            const f = findFood(item.id);
+            if (!f) return;
+            const calc = calcFor(f, item.grams);
+            catKcal += calc.kcal;
+            catP += calc.p;
+            catC += calc.c;
+            catF += calc.fat;
+            const row = document.createElement('div');
+            row.className = 'meal-row';
+            row.innerHTML = `
+                <div class="meal-name">${f.name}</div>
+                <input class="meal-grams" type="number" value="${item.grams}" onchange="updateGrams('${cat}', '${f.id}', this.value)">
+                <div class="meal-macros">${calc.kcal} kcal • P ${calc.p}g • C ${calc.c}g • F ${calc.fat}g</div>
+                <button class="del-btn" onclick="removeFromMeal('${cat}', '${f.id}')">×</button>
+            `;
+            list.appendChild(row);
+        });
+        totalKcal += catKcal;
+        totalP += catP;
+        totalC += catC;
+        totalF += catF;
+        const totalsRow = document.createElement('div');
+        totalsRow.className = 'category-totals';
+        totalsRow.innerHTML = `
+            <div>${cat} Totals: ${round(catKcal)} kcal • P ${round(catP, 1)}g • C ${round(catC, 1)}g • F ${round(catF, 1)}g</div>
         `;
-        container.appendChild(row);
+        list.appendChild(totalsRow);
+        details.appendChild(list);
+        container.appendChild(details);
     });
-    el('total-kcal').textContent = round(tk);
-    el('total-p').textContent = round(tp, 1);
-    el('total-c').textContent = round(tc, 1);
-    el('total-f').textContent = round(tf, 1);
-    el('pace-p').textContent = round(tp / 20, 2);
-    el('pace-c').textContent = round(tc / 20, 2);
-    el('pace-f').textContent = round(tf / 10, 2);
-    updateBars(tp, tc, tf);
+    el('total-kcal').textContent = round(totalKcal);
+    el('total-p').textContent = round(totalP, 1);
+    el('total-c').textContent = round(totalC, 1);
+    el('total-f').textContent = round(totalF, 1);
+    el('pace-p').textContent = round(totalP / 20, 2);
+    el('pace-c').textContent = round(totalC / 20, 2);
+    el('pace-f').textContent = round(totalF / 10, 2);
+    updateBars(totalKcal, totalP, totalC, totalF);
+    updateDifferences(totalKcal, totalP, totalC, totalF);
 }
 
-function updateBars(p, c, f) {
+function updateBars(kcal, p, c, f) {
+    const kcalT = el('calories-target').value || 2000;
     const pt = el('protein-target').value || 150;
     const ct = el('carbs-target').value || 200;
     const ft = el('fat-target').value || 70;
+    el('calories-bar').style.width = Math.min(100, (kcal / kcalT) * 100) + '%';
     el('protein-bar').style.width = Math.min(100, (p / pt) * 100) + '%';
     el('carbs-bar').style.width = Math.min(100, (c / ct) * 100) + '%';
     el('fat-bar').style.width = Math.min(100, (f / ft) * 100) + '%';
 }
 
-// Export
-function exportMeal() {
-    let csv = 'Food Name,Grams,kcal,Protein (g),Carbs (g),Fat (g)\n';
-    MEAL.forEach(item => {
-        const f = findFood(item.id);
-        if (!f) return;
-        const calc = calcFor(f, item.grams);
-        csv += `${f.name},${item.grams},${calc.kcal},${calc.p},${calc.c},${calc.fat}\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'meal.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+function updateDifferences(kcal, p, c, f) {
+    const kcalT = el('calories-target').value || 2000;
+    const pt = el('protein-target').value || 150;
+    const ct = el('carbs-target').value || 200;
+    const ft = el('fat-target').value || 70;
+    el('diff-kcal').textContent = round(kcal - kcalT);
+    el('diff-p').textContent = round(p - pt, 1);
+    el('diff-c').textContent = round(c - ct, 1);
+    el('diff-f').textContent = round(f - ft, 1);
 }
 
 // Event listeners
 el('search').addEventListener('input', renderResults);
-el('clear-btn').addEventListener('click', () => { MEAL = []; renderMeal(); });
-el('export-btn').addEventListener('click', exportMeal);
+el('clear-btn').addEventListener('click', () => { 
+    Object.keys(MEALS).forEach(cat => MEALS[cat] = []);
+    renderMeals(); 
+});
 
 // Init
 loadFoods();
