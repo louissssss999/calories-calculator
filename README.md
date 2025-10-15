@@ -1,6 +1,6 @@
-# PACE Plate (Food Calorie Calculator)
+# P.A.C.E. Calories Calculator
 
-A lightweight, static web app to search foods, add portions, and see calories, macros, and P.A.C.E. portions (P20, C20, F10). Works locally or via GitHub Pages. No backend required.
+A professional, lightweight, static web app for P.A.C.E. to search foods, add portions to different meal categories (Breakfast, Lunch, Dinner, Snacks), and track calories, macros, and P.A.C.E. portions (PRO, CHO, FAT). Compare against daily targets, including calories. Works locally or via GitHub Pages. No backend required.
 
 ## Project structure
 - index.html
@@ -8,14 +8,18 @@ A lightweight, static web app to search foods, add portions, and see calories, m
 - app.js
 - foods.csv
 - README.md
+- smaller logo P.A.C.E..jpg (logo image)
 
 ## Features
 - Search foods from a CSV (client-side)
-- Add items to a meal and edit grams inline
-- Live totals for kcal, protein, carbs, fat
-- P.A.C.E. portions summary: P20 = protein/20, C20 = carbs/20, F10 = fat/10
-- Adjustable daily macro targets with progress bars
-- Export current meal to CSV
+- Add items to categorized meals (Breakfast, Lunch, Dinner, Snacks) with inline gram editing
+- Collapsible meal categories with per-category totals
+- Live overall totals for kcal, protein, carbs, fat
+- P.A.C.E. portions summary: PRO = protein/20, CHO = carbs/20, FAT = fat/10
+- Adjustable daily macro and calorie targets with progress bars
+- Show differences (over/under) from daily targets
+- Clear all meals button
+- Professional layout with logo in header
 
 ## Data model
 All nutrition values are per 100 g.
@@ -32,6 +36,6 @@ kcal = round(kcal_100g * factor)
 protein_g = round(protein_g_100g * factor, 1)
 carbs_g = round(carbs_g_100g * factor, 1)
 fat_g = round(fat_g_100g * factor, 1)
-P20 = round(protein_g / 20, 2)
-C20 = round(carbs_g / 20, 2)
-F10 = round(fat_g / 10, 2)
+PRO = round(protein_g / 20, 2)
+CHO = round(carbs_g / 20, 2)
+FAT = round(fat_g / 10, 2)
